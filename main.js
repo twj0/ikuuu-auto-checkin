@@ -116,10 +116,17 @@ async function main() {
   const msgHeader = "\n======== 签到结果 ========\n\n";
   console.log(msgHeader);
 
+  let hasError = false;
+
   const resultLines = results.map((result, index) => {
     const accountName = accounts[index].name;
 
     const isSuccess = result.status === "fulfilled";
+
+    if (!isSuccess) {
+      hasError = true;
+    }
+
     const icon = isSuccess ? "✅" : "❌";
     const message = isSuccess ? result.value : result.reason.message;
 
@@ -133,6 +140,10 @@ async function main() {
   const resultMsg = resultLines.join("\n");
 
   setGitHubOutput("result", resultMsg);
+
+  if (hasError) {
+    process.exit(1);
+  }
 }
 
 main();
